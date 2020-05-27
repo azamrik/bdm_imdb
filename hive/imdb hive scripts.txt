@@ -34,6 +34,7 @@ create table title_ratings(tconst string, averageRating double, numVotes int) co
 #######################################################################################################################
 #Script to be automated by crontab
 ##download IMDB dataset (will download and replace existing file, to be run daily)
+##may need to delete (drop) the previous table and recreate new table for each tsv to update the entire table with the new data
 wget -q https://datasets.imdbws.com/name.basics.tsv.gz -O /home/student/imdb/data/name.basics.tsv.gz
 wget -q https://datasets.imdbws.com/title.akas.tsv.gz -O /home/student/imdb/data/title.akas.tsv.gz
 wget -q https://datasets.imdbws.com/title.basics.tsv.gz -O /home/student/imdb/data/title.basics.tsv.gz
