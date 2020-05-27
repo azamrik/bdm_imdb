@@ -1,0 +1,1 @@
+This directory will contain the code for the ***Spark Analysis*** project that will compare analysing ***TSV*** files vs ***Parquet*** files.
