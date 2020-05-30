@@ -57,7 +57,7 @@ hive -e "create table if not exists title_principal(tconst string, ordering int,
 hive -e "create table if not exists title_principal_pq(tconst string, ordering int, nconst string, category string, job string) stored as Parquet;"
 
 #title_ratings
-hive -e "create table if not exists title_ratings(tconst string, averageRating double, numVotes int) comment 'title ratings' row format delimited fields terminated by '\t' tblproperties(\"skip.header.line.count\"=\"1\"\,\"serialization.null.format\"=\"\");"
+hive -e "create table if not exists title_ratings(tconst string, averageRating double, numVotes int) comment 'title ratings' row format delimited fields terminated by '\t' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
 
 hive -e "create table if not exists title_ratings_pq(tconst string, averageRating double, numVotes int) comment 'title ratings' stored as Parquet;"
 
