@@ -81,5 +81,6 @@ hive -e "insert overwrite table title_akas_pq select * from title_akas;"
 hive -e "insert overwrite table title_basics_pq select * from title_basics;"
 hive -e "insert overwrite table title_crew_pq select * from title_crew;"
 hive -e "insert overwrite table title_episode_pq select * from title_episode;"
+hive -e "insert overwrite table title_principal_pq select * from title_principal;"
 hive -e "insert overwrite table title_ratings_pq select * from title_ratings;"
 
