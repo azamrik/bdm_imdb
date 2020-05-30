@@ -25,3 +25,4 @@ hs_err_pid*
 #Mac folder layout file
 *.DS_Store
 .vscode
+hive/metastore_db/
