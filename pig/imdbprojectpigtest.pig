@@ -45,7 +45,7 @@ store name_basics into 'hdfs://localhost:9000/user/student/imdbproject/name_basi
 title_akas = load 'hdfs://localhost:9000/user/student/imdbproject/title.akas.tsv' using PigStorage('\t') as (titleId:chararray, ordering:int, title:chararray, region:chararray, language:chararray, types:chararray, attributes:chararray, isOriginalTitle:int) 
 store title_akas into 'hdfs://localhost:9000/user/student/imdbrpoejct/title_akas.tsv' using PigStorage('\t');
 
-title_basics = load 'hdfs://localhost:9000/user/student/imdbproject/title.basics.tsv' using PigStorage('\t') as (tconst:chararray, titleType:chararray, primaryTitle:chararray, originalTitle:chararray, isAdult:int, startYear:int, endYear:chararray, runtimeMinutes:int, generes:chararray);
+title_basics = load 'hdfs://localhost:9000/user/student/imdbproject/title.basics.tsv' using PigStorage('\t') as (tconst:chararray, titleType:chararray, primaryTitle:chararray, originalTitle:chararray, isAdult:int, startYear:int, endYear:int, runtimeMinutes:int, generes:chararray);
 title_basics = foreach title_basics generate tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, TOKENIZE(genres, ',') as genres;
 store title_basics into 'hdfs://localhost:9000/user/student/imdbproject/title_basics.tsv' using PigStorage('\t');
 
@@ -60,7 +60,7 @@ title_principals = load 'hdfs://localhost:9000/user/student/imdbproject/title.pr
 title_principals = foreach title_principals generate tconst, ordering, nconst, category, job, TOKENIZE(characters, ',') as characters;
 store title_principals into 'hdfs://localhost:9000/user/student/imdbproject/title_principals.tsv' using PigStorage('\t');
 
-title_ratings = load 'hdfs://localhost:9000/user/student/imdbproject/title.ratings.tsv' using PigStorage('\t') as (tconst:chararray, averageRating:float, numVotes:int);
+title_ratings = load 'hdfs://localhost:9000/user/student/imdbproject/title.ratings.tsv' using PigStorage('\t') as (tconst:chararray, averageRating:double, numVotes:int);
 store title_ratings into 'hdfs://localhost:9000/user/student/imdbproject/title_ratings.tsv' using PigStorage('\t');
 
 /* Store as parquet */
