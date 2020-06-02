@@ -57,7 +57,8 @@ title_episode = load 'hdfs://localhost:9000/user/student/imdbproject/title.episo
 store title_episode into 'hdfs://localhost:9000/user/student/imdbproject/title_episode.tsv' using PigStorage('\t');
 
 title_principals = load 'hdfs://localhost:9000/user/student/imdbproject/title.principals.tsv' using PigStorage('\t') as (tconst:chararray, ordering:int, nconst:chararray, category:chararray, job:chararray, characters:chararray);
-title_principals = foreach title_principals generate tconst, ordering, nconst, category, job, TOKENIZE(characters, ',') as characters;
+title_principals = foreach title_principals generate tconst, ordering, nconst, category, job, REPLACE(characters, '","', '|') as characters;
+title_principals = foreach title_principals generate tconst, ordering, nconst, category, job, TOKENIZE(characters, '|') as characters;
 store title_principals into 'hdfs://localhost:9000/user/student/imdbproject/title_principals.tsv' using PigStorage('\t');
 
 title_ratings = load 'hdfs://localhost:9000/user/student/imdbproject/title.ratings.tsv' using PigStorage('\t') as (tconst:chararray, averageRating:double, numVotes:int);
