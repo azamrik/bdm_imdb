@@ -24,6 +24,9 @@ wget -q https://datasets.imdbws.com/title.ratings.tsv.gz -O /home/student/imdb/d
 # create database imdb;
 # use imdb;
 
+
+start_time=$(date +%s)
+echo "start time: $start_time" 
 ##create table for each files (only need to be created once)
 #each table will need 2 table, 1 to store the tsv another one for parquet format
 #name_basics
@@ -84,3 +87,8 @@ hive -e "insert overwrite table title_episode_pq select * from title_episode;"
 hive -e "insert overwrite table title_principal_pq select * from title_principal;"
 hive -e "insert overwrite table title_ratings_pq select * from title_ratings;"
 
+end_time=$(date +%s)
+echo "end time: $end_time"
+diff=$((end_time-start_time))
+diff_mins=$(((end_time-start_time)/60))
+echo "Time taken to execute script $diff_mins minutes ($diff seconds)"
