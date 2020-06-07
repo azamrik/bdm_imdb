@@ -19,7 +19,7 @@ wget -q https://datasets.imdbws.com/title.ratings.tsv.gz -O /home/student/imdb/r
 
 gunzip -f /home/student/imdb/raw_downloads/name.basics.tsv.gz
 gunzip -f /home/student/imdb/raw_downloads/title.akas.tsv.gz
-gunzip -f /home/student/imdb/raw_doption opdfownloads/title.basics.tsv.gz
+gunzip -f /home/student/imdb/raw_downloads/title.basics.tsv.gz
 gunzip -f /home/student/imdb/raw_downloads/title.crew.tsv.gz
 gunzip -f /home/student/imdb/raw_downloads/title.episode.tsv.gz
 gunzip -f /home/student/imdb/raw_downloads/title.principals.tsv.gz
@@ -40,4 +40,4 @@ hdfs dfs -copyFromLocal -f /home/student/imdb/raw_downloads/title.principals.tsv
 hdfs dfs -copyFromLocal -f /home/student/imdb/raw_downloads/title.ratings.tsv hdfs://localhost:9000/user/student/imdbproject
 
 # Run pig script
-# pig -f /home/student/bdm_imdb/pig/imdb_pig_script.pig
+pig -f /home/student/bdm_imdb/pig/imdb_pig_script.pig
