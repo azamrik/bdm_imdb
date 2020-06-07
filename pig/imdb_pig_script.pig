@@ -1,7 +1,3 @@
-
-/* set parquet.compression gzip; */
-
-
 /*	1. load tsv file using PigStorage with tab delimiter.
 	2. remove headers
 	3. tokenize (split chararray into several tokens) where necessary.
@@ -60,6 +56,15 @@ no_header_ratings = filter ranked_ratings by (rank_title_ratings > 1);
 ordered_ratings = order no_header_ratings by rank_title_ratings;
 title_ratings = foreach title_ratings generate tconst, averageRating, numVotes;
 
+
+/* Remove old files */
+rmf hdfs://localhost:9000/user/student/imdbproject/name_basics.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_akas.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_basics.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_crew.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_episode.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_principals.snappy.parquet 
+rmf hdfs://localhost:9000/user/student/imdbproject/title_ratings.snappy.parquet
 
 /* Store as parquet */
 store name_basics into 'hdfs://localhost:9000/user/student/imdbproject/name_basics.snappy.parquet' using org.apache.parquet.pig.ParquetStorer();
