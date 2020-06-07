@@ -40,46 +40,46 @@ pig -x mapreduce
 	
 name_basics = load 'hdfs://localhost:9000/user/student/imdbproject/name.basics.tsv' using PigStorage('\t') as (nconst:chararray, primaryName:chararray, birthYear:int, deathYear:int, primaryProfession:chararray, knownForTitles:chararray);
 ranked_name = rank name_basics;
-no_header_name = filter ranked_name by (ranked_name > 1);
-ordered_name = order no_header_name by ranked_name;
+no_header_name = filter ranked_name by (rank_name_basics > 1);
+ordered_name = order no_header_name by rank_name_basics;
 name_basics = foreach name_basics generate nconst, primaryName, birthYear, deathYear, primaryProfession, knownForTitles;
 name_basics = foreach name_basics generate nconst, primaryName, birthYear, deathYear, TOKENIZE(primaryProfession, ',') as primaryProfession, TOKENIZE(knownForTitles, ',') as knownForTitles;
 
 
 title_akas = load 'hdfs://localhost:9000/user/student/imdbproject/title.akas.tsv' using PigStorage('\t') as (titleId:chararray, ordering:int, title:chararray, region:chararray, language:chararray, types:chararray, attributes:chararray, isOriginalTitle:int); 
 ranked_akas = rank title_akas;
-no_header_akas = filter ranked_akas by (ranked_akas > 1);
-ordered_akas = order no_header_akas by ranked_akas;
+no_header_akas = filter ranked_akas by (rank_title_akas > 1);
+ordered_akas = order no_header_akas by rank_title_akas;
 title_akas = foreach title_akas generate titleId, ordering, title, region, language, types, attributes, isOriginalTitle;
 
 
 title_basics = load 'hdfs://localhost:9000/user/student/imdbproject/title.basics.tsv' using PigStorage('\t') as (tconst:chararray, titleType:chararray, primaryTitle:chararray, originalTitle:chararray, isAdult:int, startYear:int, endYear:int, runtimeMinutes:int, genres:chararray);
 ranked_basics = rank title_basics;
-no_header_basics = filter ranked_basics by (ranked_basics > 1);
-ordered_basics = order no_header_basics by ranked_basics;
-title_basics = foreach title_basics generate tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes;
+no_header_basics = filter ranked_basics by (rank_title_basics > 1);
+ordered_basics = order no_header_basics by rank_title_basics;
+title_basics = foreach title_basics generate tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, genres;
 title_basics = foreach title_basics generate tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, TOKENIZE(genres, ',') as genres;
 
 
 title_crew = load 'hdfs://localhost:9000/user/student/imdbproject/title.crew.tsv' using PigStorage('\t') as (tconst:chararray, directors:chararray, writers:chararray);
 ranked_crew = rank title_crew;
-no_header_crew = filter ranked_crew by (ranked_crew > 1);
-ordered_crew = order no_header_crew by ranked_crew;
+no_header_crew = filter ranked_crew by (rank_title_crew > 1);
+ordered_crew = order no_header_crew by rank_title_crew;
 title_crew = foreach title_crew generate tconst, directors, writers;
 title_crew = foreach title_crew generate tconst, TOKENIZE(directors, ',') as directors, TOKENIZE(writers, ',') as writers;
 
 
 title_episode = load 'hdfs://localhost:9000/user/student/imdbproject/title.episode.tsv' using PigStorage('\t') as (tconst:chararray, parentTconst:chararray, seasonNumber:int, episodeNumber:int);
 ranked_episode = rank title_episode;
-no_header_episode = filter ranked_episode by (ranked_episode > 1);
-ordered_episode = order no_header_episode by ranked_episode;
+no_header_episode = filter ranked_episode by (rank_title_episode > 1);
+ordered_episode = order no_header_episode by rank_title_episode;
 title_episode = foreach title_episode generate tconst, parentTconst, seasonNumber, episodeNumber;
 
 
 title_principals = load 'hdfs://localhost:9000/user/student/imdbproject/title.principals.tsv' using PigStorage('\t') as (tconst:chararray, ordering:int, nconst:chararray, category:chararray, job:chararray, characters:chararray);
 ranked_principals = rank title_principals;
-no_header_principals = filter ranked_principals by (ranked_principals > 1);
-ordered_principals = order no_header_principals by ranked_principals;
+no_header_principals = filter ranked_principals by (rank_title_principals > 1);
+ordered_principals = order no_header_principals by rank_title_principals;
 title_principals = foreach title_principals generate tconst, ordering, nconst, category, job, characters;
 title_principals = foreach title_principals generate tconst, ordering, nconst, category, job, REPLACE(characters, '","', '|') as characters;
 title_principals = foreach title_principals generate tconst, ordering, nconst, category, job, TOKENIZE(characters, '|') as characters;
@@ -87,8 +87,8 @@ title_principals = foreach title_principals generate tconst, ordering, nconst, c
 
 title_ratings = load 'hdfs://localhost:9000/user/student/imdbproject/title.ratings.tsv' using PigStorage('\t') as (tconst:chararray, averageRating:double, numVotes:int);
 ranked_ratings = rank title_ratings;
-no_header_ratings = filter ranked_ratings by (ranked_ratings > 1);
-ordered_ratings = order no_header_ratings by ranked_ratings;
+no_header_ratings = filter ranked_ratings by (rank_title_ratings > 1);
+ordered_ratings = order no_header_ratings by rank_title_ratings;
 title_ratings = foreach title_ratings generate tconst, averageRating, numVotes;
 
 
