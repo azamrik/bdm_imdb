@@ -64,6 +64,15 @@ rmf hdfs://localhost:9000/user/student/imdbproject/title_episode.snappy.parquet'
 rmf hdfs://localhost:9000/user/student/imdbproject/title_principals.snappy.parquet
 rmf hdfs://localhost:9000/user/student/imdbproject/title_ratings.snappy.parquet
 
+/* Remove old files */
+rmf hdfs://localhost:9000/user/student/imdbproject/name_basics.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_akas.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_basics.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_crew.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_episode.snappy.parquet
+rmf hdfs://localhost:9000/user/student/imdbproject/title_principals.snappy.parquet 
+rmf hdfs://localhost:9000/user/student/imdbproject/title_ratings.snappy.parquet
+
 /* Store as parquet */
 store name_basics into 'hdfs://localhost:9000/user/student/imdbproject/name_basics.snappy.parquet' using org.apache.parquet.pig.ParquetStorer();
 store title_akas into 'hdfs://localhost:9000/user/student/imdbproject/title_akas.snappy.parquet' using org.apache.parquet.pig.ParquetStorer();
