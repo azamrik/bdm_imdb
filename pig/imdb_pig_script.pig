@@ -42,11 +42,11 @@ name_basics = load 'hdfs://localhost:9000/user/student/imdbproject/name.basics.t
 ranked_name = rank name_basics;
 no_header_name = filter ranked_name by (ranked_name > 1);
 ordered_name = order no_header_name by ranked_name;
-name_basics = foreach ordered generate nconst, primaryName, birthYear, deathYear, primaryProfession, knownForTitles;
+name_basics = foreach name_basics generate nconst, primaryName, birthYear, deathYear, primaryProfession, knownForTitles;
 name_basics = foreach name_basics generate nconst, primaryName, birthYear, deathYear, TOKENIZE(primaryProfession, ',') as primaryProfession, TOKENIZE(knownForTitles, ',') as knownForTitles;
 
 
-title_akas = load 'hdfs://localhost:9000/user/student/imdbproject/title.akas.tsv' using PigStorage('\t') as (titleId:chararray, ordering:int, title:chararray, region:chararray, language:chararray, types:chararray, attributes:chararray, isOriginalTitle:int) 
+title_akas = load 'hdfs://localhost:9000/user/student/imdbproject/title.akas.tsv' using PigStorage('\t') as (titleId:chararray, ordering:int, title:chararray, region:chararray, language:chararray, types:chararray, attributes:chararray, isOriginalTitle:int); 
 ranked_akas = rank title_akas;
 no_header_akas = filter ranked_akas by (ranked_akas > 1);
 ordered_akas = order no_header_akas by ranked_akas;
