@@ -56,7 +56,6 @@ no_header_ratings = filter ranked_ratings by (rank_title_ratings > 1);
 ordered_ratings = order no_header_ratings by rank_title_ratings;
 title_ratings = foreach title_ratings generate tconst, averageRating, numVotes;
 
-
 /* Remove old files */
 rmf hdfs://localhost:9000/user/student/imdbproject/name_basics.snappy.parquet
 rmf hdfs://localhost:9000/user/student/imdbproject/title_akas.snappy.parquet
