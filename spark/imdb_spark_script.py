@@ -4,37 +4,36 @@ from pyspark.sql.functions import split, col, explode, regexp_replace, collect_l
 import urllib.request
 from datetime import datetime
 
-print("Script started at:")
-print(datetime.now())
-
 
 # Create Spark session
 spark = SparkSession.builder \
-    .config("spark.driver.memory", "4g")\
     .appName("imdb") \
-    .master("local[4]") \
+    .master("local[3]") \
     .getOrCreate()
-# spark.sparkContext.setLogLevel("ERROR")
 
-print(spark.sparkContext.getConf().getAll())
+spark.sparkContext.setLogLevel("ERROR")
 
-# base_url = "https://datasets.imdbws.com/"
-# base_directory = "/home/student/Downloads/imdb/"
-# files = ["name.basics.tsv.gz",
-#     "title.akas.tsv.gz",
-#     "title.basics.tsv.gz",
-#     "title.crew.tsv.gz",
-#     "title.episode.tsv.gz",
-#     "title.principals.tsv.gz",
-#     "title.ratings.tsv.gz"
-# ]
 
-# for file in files:
-#     print("Downloading " + file)
-#     urllib.request.urlretrieve(base_url + file, base_directory + file)
+base_url = "https://datasets.imdbws.com/"
+base_directory = "/home/student/Downloads/imdb/"
+files = ["name.basics.tsv.gz",
+    "title.akas.tsv.gz",
+    "title.basics.tsv.gz",
+    "title.crew.tsv.gz",
+    "title.episode.tsv.gz",
+    "title.principals.tsv.gz",
+    "title.ratings.tsv.gz"
+]
 
-# Name basics
-print("Name Basics")
+for file in files:
+    print("Downloading " + file)
+    urllib.request.urlretrieve(base_url + file, base_directory + file)
+
+print("Script started at:")
+print(datetime.now())
+start_time = datetime.now()
+
+print("Processing name_basics")
 (
     spark.read.format("com.databricks.spark.csv").option("header", "true")\
         .option("sep", "\t")\
@@ -47,13 +46,12 @@ print("Name Basics")
         .withColumnRenamed("birthYear", "birth_year")\
         .withColumnRenamed("deathYear", "death_year")\
         .drop("primaryProfession", "knownForTitles")
-        .repartition(5,"nconst").write.format("parquet").mode("overwrite")
-        .save("/home/student/Downloads/imdb_spark_output/name/")
+        .repartition(3, "nconst").write.format("parquet").mode("overwrite")
+        .save("hdfs://localhost:9000/user/student/imdb_spark_output/name/")
 )
 
-(spark.sparkContext.getConf().getAll())
 
-print("Title AKAs")
+print("Processing title_akas")
 # Title AKAs
 (
     spark.read.format("com.databricks.spark.csv")
@@ -64,13 +62,13 @@ print("Title AKAs")
         .load("/home/student/Downloads/imdb/title.akas.tsv.gz")
         .withColumnRenamed("titleId", "title_id")
         .withColumnRenamed("isOriginalTitle", "is_original_title")
-        .repartition(5, "title_id").write.format("parquet").mode("overwrite")
-        .save("/home/student/Downloads/imdb_spark_output/title_akas/")
+        .repartition(2, "title_id").write.format("parquet").mode("overwrite")
+        .save("hdfs://localhost:9000/user/student/imdb_spark_output/title_akas/")
 )
 
 # Title Basics
 
-print("Title Basics")
+print("Processing title_basics")
 (
     spark.read.format("com.databricks.spark.csv")
         .option("header", "true")
@@ -89,11 +87,11 @@ print("Title Basics")
         .withColumn("genre_list", split(col("genres"), ",").cast("array<string>"))
         .drop("genres")
         .withColumnRenamed("genre_list", "genres")
-        .repartition(5, "tconst").write.format("parquet").mode("overwrite")
-        .save("/home/student/Downloads/imdb_spark_output/title_basics/")
+        .repartition(2, "tconst").write.format("parquet").mode("overwrite")
+        .save("hdfs://localhost:9000/user/student/imdb_spark_output/title_basics/")
 )
 
-print("Title Crew")
+print("Processing title_crew")
 (
     spark.read.format("com.databricks.spark.csv")
         .option("header", "true")
@@ -107,11 +105,11 @@ print("Title Crew")
         .drop("directors", "writers")
         .withColumnRenamed("directors_list", "directors")
         .withColumnRenamed("writers_list", "writers")
-        .repartition(5, "tconst").write.format("parquet").mode("overwrite")
-        .save("/home/student/Downloads/imdb_spark_output/title_crew/")
+        .repartition(1, "tconst").write.format("parquet").mode("overwrite")
+        .save("hdfs://localhost:9000/user/student/imdb_spark_output/title_crew/")
 )
 
-print("Title Episode")
+print("Processing title_episode")
 (
     spark.read.format("com.databricks.spark.csv")
         .option("header", "true")
@@ -121,11 +119,11 @@ print("Title Episode")
         .option("quote", "")
         .load("/home/student/Downloads/imdb/title.episode.tsv.gz")
         .withColumnRenamed("parentTconst", "parent_tconst")
-        .repartition(5, "tconst").write.format("parquet").mode("overwrite")
-        .save("/home/student/Downloads/imdb_spark_output/title_episode/")
+        .repartition(1, "tconst").write.format("parquet").mode("overwrite")
+        .save("hdfs://localhost:9000/user/student/imdb_spark_output/title_episode/")
 )
 
-print("Title Principals")
+print("Processing title_principals")
 (
     spark.read.format("com.databricks.spark.csv")
         .option("header", "true")
@@ -135,16 +133,16 @@ print("Title Principals")
         .option("quote", "")
         .load("/home/student/Downloads/imdb/title.principals.tsv.gz")
         .withColumn("characters_exploded", explode(split( regexp_replace(col("characters"), r'\[|\]', '')   , '","').cast("array<string>")))
-        .withColumn("characters_clean", regexp_replace(col("characters_exploded"), r'\"', ''))
-        .groupBy("tconst","ordering", "nconst", "category", "job", "characters")
-        .agg(collect_list("characters_clean").alias("characters_array"))
+        # .withColumn("characters_clean", regexp_replace(col("characters_exploded"), r'\"', ''))
+        # .groupBy("tconst","ordering", "nconst", "category", "job", "characters")
+        # .agg(collect_list("characters_clean").alias("characters_array"))
         .drop("characters")
-        .withColumnRenamed("characters_array", "characters")
-        .repartition(5, "tconst").orderBy("nconst").write.format("parquet").mode("overwrite")
-        .save("/home/student/Downloads/imdb_spark_output/title_principals/")
+        .withColumnRenamed("characters_exploded", "characters")
+        .repartition(3, "tconst").write.format("parquet").mode("overwrite")
+        .save("hdfs://localhost:9000/user/student/imdb_spark_output/title_principals/")
 )
 
-print("Title Ratings")
+print("Processing title_ratings")
 (
     spark.read.format("com.databricks.spark.csv")
         .option("header", "true")
@@ -155,12 +153,16 @@ print("Title Ratings")
         .load("/home/student/Downloads/imdb/title.ratings.tsv.gz")
         .withColumnRenamed("averageRating", "average_rating")
         .withColumnRenamed("numVotes", "num_votes")
-        .repartition(5, "tconst").write.format("parquet").mode("overwrite")
-        .save("/home/student/Downloads/imdb_spark_output/title_ratings/")
+        .repartition(1, "tconst").write.format("parquet").mode("overwrite")
+        .save("hdfs://localhost:9000/user/student/imdb_spark_output/title_ratings/")
 )
-
-
-print(spark.sparkContext.getConf().getAll())
 
 print("Script Ended at:")
 print(datetime.now())
+end_time = datetime.now()
+diff = (end_time - start_time)
+
+print("Time taken to execute script {diff_mins} minutes ({diff_sec} seconds)".format(diff_mins=(diff.total_seconds()/60), diff_sec=diff.total_seconds()))
+
+# Time taken to execute script 13.691127333333332 minutes (821.46764 seconds)
+# Time taken to execute script 13.384675266666667 minutes (803.080516 seconds)
