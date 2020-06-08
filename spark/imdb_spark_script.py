@@ -41,7 +41,7 @@ print("Processing name_basics")
         .option("nullValue", "\\N")\
         .load("/home/student/Downloads/imdb/name.basics.tsv.gz")\
         .withColumn("primary_profession", split(col("primaryProfession"), ",").cast("array<string>"))\
-        .withColumn("known_for_tiltes", split(col("knownForTitles"), ",").cast("array<string>"))\
+        .withColumn("known_for_titles", split(col("knownForTitles"), ",").cast("array<string>"))\
         .withColumnRenamed("primaryName", "primary_name")\
         .withColumnRenamed("birthYear", "birth_year")\
         .withColumnRenamed("deathYear", "death_year")\
@@ -133,9 +133,9 @@ print("Processing title_principals")
         .option("quote", "")
         .load("/home/student/Downloads/imdb/title.principals.tsv.gz")
         .withColumn("characters_exploded", explode(split( regexp_replace(col("characters"), r'\[|\]', '')   , '","').cast("array<string>")))
-        # .withColumn("characters_clean", regexp_replace(col("characters_exploded"), r'\"', ''))
-        # .groupBy("tconst","ordering", "nconst", "category", "job", "characters")
-        # .agg(collect_list("characters_clean").alias("characters_array"))
+        .withColumn("characters_clean", regexp_replace(col("characters_exploded"), r'\"', ''))
+        .groupBy("tconst","ordering", "nconst", "category", "job", "characters")
+        .agg(collect_list("characters_clean").alias("characters_array"))
         .drop("characters")
         .withColumnRenamed("characters_exploded", "characters")
         .repartition(3, "tconst").write.format("parquet").mode("overwrite")
@@ -164,5 +164,3 @@ diff = (end_time - start_time)
 
 print("Time taken to execute script {diff_mins} minutes ({diff_sec} seconds)".format(diff_mins=(diff.total_seconds()/60), diff_sec=diff.total_seconds()))
 
-# Time taken to execute script 13.691127333333332 minutes (821.46764 seconds)
-# Time taken to execute script 13.384675266666667 minutes (803.080516 seconds)
