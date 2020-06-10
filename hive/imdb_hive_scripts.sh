@@ -37,9 +37,9 @@ hive -e "create table if not exists name_basics_pq(nconst string, primaryName st
 #title_akas
 hive -e "create table if not exists title_akas(titleId string, ordering int, title string, region string, language string, types string, attributes string, isOriginalTitle boolean) comment 'title AKAs' row format delimited fields terminated by '\t' collection items terminated by ',' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
 
-hive -e "create table if not exists title_akas_formatted(titleId string, ordering int, title string, region string, language string, types array<string>, attributes array<string>, isOriginalTitle boolean) comment 'title AKAs' row format delimited fields terminated by '\t' collection items terminated by ',' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
+#hive -e "create table if not exists title_akas_formatted(titleId string, ordering int, title string, region string, language string, types array<string>, attributes array<string>, isOriginalTitle boolean) comment 'title AKAs' row format delimited fields terminated by '\t' collection items terminated by ',' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
 
-hive -e "create table if not exists title_akas_pq(titleId string, ordering int, title string, region string, language string, types array<string>, attributes array<string>, isOriginalTitle boolean) stored as Parquet;
+hive -e "create table if not exists title_akas_pq(titleId string, ordering int, title string, region string, language string, types array<string>, attributes array<string>, isOriginalTitle boolean) stored as Parquet;"
 
 #title_basics
 hive -e "create table if not exists title_basics(tconst string, titleType string, primaryTitle string, originalTitle string, isAdult boolean, startYear int, endYear int, runtimeMinutes int, genres string) comment 'title basics' row format delimited fields terminated by '\t' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
@@ -49,7 +49,7 @@ hive -e "create table if not exists title_basics_pq(tconst string, titleType str
 #title_crew
 hive -e "create table if not exists title_crew(tconst string, directors string, writers string) comment 'title crew' row format delimited fields terminated by '\t' collection items terminated by ',' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
 
-hive -e "create table if not exists title_crew_formatted(tconst string, directors array<string>, writers array<string>) comment 'title crew' row format delimited fields terminated by '\t' collection items terminated by ',' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
+#hive -e "create table if not exists title_crew_formatted(tconst string, directors array<string>, writers array<string>) comment 'title crew' row format delimited fields terminated by '\t' collection items terminated by ',' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
 
 hive -e "create table if not exists title_crew_pq(tconst string, directors array<string>, writers array<string>) stored as Parquet;"
 
@@ -61,11 +61,11 @@ hive -e "create table if not exists title_episode_pq(tconst string, parentTconst
 #title_principals
 hive -e "create table if not exists title_principal(tconst string, ordering int, nconst string, category string, job string, characters string) comment 'title principal' row format delimited fields terminated by '\t' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
 
-hive -e "create table if not exists title_principal_formatted(tconst string, ordering int, nconst string, category string, job string, characters array<string>) comment 'title principal' row format delimited fields terminated by '\t'collection items terminated by '|' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
+#hive -e "create table if not exists title_principal_formatted(tconst string, ordering int, nconst string, category string, job string, characters array<string>) comment 'title principal' row format delimited fields terminated by '\t'collection items terminated by '|' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
 
 hive -e "create table if not exists title_principal_pq(tconst string, ordering int, nconst string, category string, job string, characters array<string>) stored as Parquet;"
 
-#title_ratings
+#title_ratings 
 hive -e "create table if not exists title_ratings(tconst string, averageRating double, numVotes int) comment 'title ratings' row format delimited fields terminated by '\t' tblproperties(\"skip.header.line.count\"=\"1\",\"serialization.null.format\"=\"\");"
 
 hive -e "create table if not exists title_ratings_pq(tconst string, averageRating double, numVotes int) comment 'title ratings' stored as Parquet;"
@@ -90,30 +90,29 @@ hive -e "insert overwrite table title_principal select tconst, ordering, nconst,
 #change "/N" to Null or ""
 hive -e "insert overwrite table title_principal select tconst, ordering, nconst, category, case when job='\\N' then null else job end as job, case when characters='\\N' then \"\" else characters end as characters from title_principal;"
 #change characteres column to array and load into final table
-hive -e "insert overwrite table title_principal_formatted select tconst, ordering, nconst, category, job, array(regexp_replace(characters,\"\"|\\[|\\]\",\"\")) as characters from title_principal;"
+#hive -e "insert overwrite table title_principal_formatted select tconst, ordering, nconst, category, job, array(regexp_replace(characters,\"\"|\\[|\\]\",\"\")) as characters from title_principal;"
 
 #format and save the output of title_crew into title_crew_formatted
 #change "/N" to Null or ""
 hive -e "insert overwrite table title_crew select tconst, case when directors='\\N' then \"\" else directors end as directors, case when writers='\\N' then \"\" else writers end as writers from title_crew;"
 #change characteres column to array and load into final table
-hive -e "insert overwrite table title_crew_formatted select tconst, array(directors) as directors,array(writers) as writers from title_crew;"
+#hive -e "insert overwrite table title_crew_formatted select tconst, array(directors) as directors,array(writers) as writers from title_crew;"
 
 #format and save the output of title_akas into title_akas_formatted
 #change "/N" to Null or ""
 hive -e "insert overwrite table title_akas select titleId, ordering, title,case when region='\\N' then \"\" else region end as region, case when language='\\N' then \"\" else language end as language, case when types='\\N' then \"\" else types end as types, case when attributes='\\N' then \"\" else attributes end as attributes, isOriginalTitle from title_akas;"
 #change characteres column to array and load into final table
-hive -e "insert overwrite table title_akas_formatted select titleId, ordering, title, region, language, array(types),array(attributes),isOriginalTitle from title_akas;"
+#hive -e "insert overwrite table title_akas_formatted select titleId, ordering, title, region, language, array(types),array(attributes),isOriginalTitle from title_akas;"
 
-#set parquet compression
+
 hive -e 'set parquet.compression=snappy'
-
 ##load data from hive tsv table to parquet
 hive -e "insert overwrite table name_basics_pq select * from name_basics;"
-hive -e "insert overwrite table title_akas_pq select * from title_akas_formatted;"
+hive -e "insert overwrite table title_akas_pq select titleId, ordering, title, region, language, array(types),array(attributes),isOriginalTitle from title_akas;"
 hive -e "insert overwrite table title_basics_pq select * from title_basics;"
-hive -e "insert overwrite table title_crew_pq select * from title_crew_formatted;"
+hive -e "insert overwrite table title_crew_pq select tconst, array(directors) as directors,array(writers) as writers from title_crew;"
 hive -e "insert overwrite table title_episode_pq select * from title_episode;"
-hive -e "insert overwrite table title_principal_pq select * from title_principal_formatted;"
+hive -e "insert overwrite table title_principal_pq select tconst, ordering, nconst, category, job, array(regexp_replace(characters,\"\"|\\[|\\]\",\"\")) as characters from title_principal;"
 hive -e "insert overwrite table title_ratings_pq select * from title_ratings;"
 
 end_time=$(date +%s)
