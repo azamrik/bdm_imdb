@@ -14,7 +14,7 @@ comment 'name basics'
 row format delimited fields terminated by '\t' 
 collection items terminated by ',' 
 tblproperties(
-    'skip.header.line.count'='1'
+    'skip.header.line.count'='1',
     'serialization.null.format'='\\N'
 );
 
