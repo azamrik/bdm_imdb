@@ -239,7 +239,7 @@ insert overwrite table title_principal_pq
         nconst, 
         category, 
         job, 
-        split(regexp_replace(case when `characters` == '\\N' then null else `characters` end,'\\[\\"|\\"\\]', ''), '\\",\\"') as `characters`
+        split(regexp_replace(case when `characters` is null then null else `characters` end,'\\[\\"|\\"\\]', ''), '\\",\\"') as `characters`
     from title_principal;
 
 -- insert overwrite table title_principal_pq select tconst, ordering, nconst, category, job, array(regexp_replace(characters,\"\"|\\[|\\]\",\"\")) as characters from title_principal;"
