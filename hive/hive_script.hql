@@ -237,8 +237,8 @@ insert overwrite table title_principal_pq
     select tconst, 
         `ordering`, 
         nconst, 
-        case when category == '\\N' then null else category end as category, 
-        case when job == '\\N' then null else job end as job, 
+        category, 
+        job, 
         split(regexp_replace(case when `characters` == '\\N' then null else `characters` end,'\\[\\"|\\"\\]', ''), '\\",\\"') as `characters`
     from title_principal;
 
